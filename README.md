@@ -9,8 +9,6 @@ run-directory conventions.
 
 - `config/namelist.init_atmosphere`: MPAS-Init configuration.
 - `config/namelist.atmosphere`: MPAS-Atmosphere configuration.
-- `vertical_levels/urban_ZR_75.txt`: 56 interface heights for the custom
-  urban-aware vertical grid.
 - `mesh/generate_hk_500m_mesh.py`: mesh-generation script for a 30 km global
   mesh with 500 m refinement around Hong Kong.
 - `mesh/hk_hull_500m_graph.info.part.112`: METIS partition assignment for 112
@@ -54,17 +52,16 @@ executable is launched. The configuration assumes this layout:
 └── run/
     ├── namelist.init_atmosphere
     ├── namelist.atmosphere
-    ├── vertical_levels/
-    │   └── urban_ZR_75.txt
     ├── GFS:<valid-time>
     └── hk_hull_500m_graph.info.part.112
 ```
 
-Copy the files under `config/`, the `vertical_levels/` directory, and the
-included partition file into `run/` before launching MPAS. In this layout,
-`../mpas_static` and `vertical_levels/urban_ZR_75.txt` resolve to the intended
-tutorial resources. This vertical-level path follows the layout documented by
-the [HKUST MPAS-Urban project](https://github.com/HKUST-MPAS/HKUST-MPAS#vertical-grid-considerations-for-urban-simulations).
+Copy the files under `config/` and the included partition file into `run/`
+before launching MPAS. In this layout, `../mpas_static` resolves to the
+intended tutorial resources. The custom vertical-level file referenced by
+`namelist.init_atmosphere` is distributed with the
+[HKUST MPAS-Urban project](https://github.com/HKUST-MPAS/HKUST-MPAS#vertical-grid-considerations-for-urban-simulations)
+and is not duplicated here.
 
 ### GFS initial-condition files
 
