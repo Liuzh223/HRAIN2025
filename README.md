@@ -68,15 +68,10 @@ the [HKUST MPAS-Urban project](https://github.com/HKUST-MPAS/HKUST-MPAS#vertical
 
 ### GFS initial-condition files
 
-GFS initial-condition files are not stored in this repository. The six files
-used by the archived experiment are approximately 818 MB each (about 4.9 GB in
-total), whereas GitHub blocks files larger than 100 MiB in ordinary Git
-repositories. Obtain the required GFS data from its original data provider or
-share it through a suitable research-data or object-storage service. Git LFS
-is technically possible, but its storage and bandwidth quotas should be
-checked before using it for a multi-gigabyte dataset. Place the downloaded
-files in the run directory using the names expected by MPAS, such as
-`GFS:<valid-time>`.
+GFS initial-condition files are not stored in this repository. Process the
+required GFS GRIB2 data using the standard WPS `ungrib.exe` workflow, setting
+the WPS intermediate-file prefix to `GFS`. Place the resulting
+`GFS:<valid-time>` files in the run directory before running MPAS-Init.
 
 ## Decomposition file
 
@@ -164,5 +159,4 @@ high-memory compute node.
 ## Provenance
 
 The configuration files originate from the HRAIN2025 GFS 30 km–500 m MPAS
-experiment. The mesh assets originate from the
-`RMUI_CASE_Mesh/reference_consistent_30km_experiment` workflow.
+experiment.
