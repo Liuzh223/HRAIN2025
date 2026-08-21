@@ -9,6 +9,8 @@ run-directory conventions.
 
 - `config/namelist.init_atmosphere`: MPAS-Init configuration.
 - `config/namelist.atmosphere`: MPAS-Atmosphere configuration.
+- `vertical_levels/urban_ZR_75.txt`: 56 interface heights for the custom
+  urban-aware vertical grid.
 - `mesh/generate_hk_500m_mesh.py`: mesh-generation script for a 30 km global
   mesh with 500 m refinement around Hong Kong.
 - `mesh/hk_hull_500m_graph.info.part.112`: METIS partition assignment for 112
@@ -52,15 +54,29 @@ executable is launched. The configuration assumes this layout:
 └── run/
     ├── namelist.init_atmosphere
     ├── namelist.atmosphere
-    ├── urban_ZR_75.txt
+    ├── vertical_levels/
+    │   └── urban_ZR_75.txt
     ├── GFS:<valid-time>
-    ├── SST:<valid-time>
     └── hk_hull_500m_graph.info.part.112
 ```
 
-Copy the files under `config/` and the included partition file into `run/`
-before launching MPAS. In this layout, `../mpas_static` and
-`./urban_ZR_75.txt` resolve to the intended tutorial resources.
+Copy the files under `config/`, the `vertical_levels/` directory, and the
+included partition file into `run/` before launching MPAS. In this layout,
+`../mpas_static` and `vertical_levels/urban_ZR_75.txt` resolve to the intended
+tutorial resources. This vertical-level path follows the layout documented by
+the [HKUST MPAS-Urban project](https://github.com/HKUST-MPAS/HKUST-MPAS#vertical-grid-considerations-for-urban-simulations).
+
+### GFS initial-condition files
+
+GFS initial-condition files are not stored in this repository. The six files
+used by the archived experiment are approximately 818 MB each (about 4.9 GB in
+total), whereas GitHub blocks files larger than 100 MiB in ordinary Git
+repositories. Obtain the required GFS data from its original data provider or
+share it through a suitable research-data or object-storage service. Git LFS
+is technically possible, but its storage and bandwidth quotas should be
+checked before using it for a multi-gigabyte dataset. Place the downloaded
+files in the run directory using the names expected by MPAS, such as
+`GFS:<valid-time>`.
 
 ## Decomposition file
 
@@ -101,16 +117,24 @@ refinement boundary. The GeoJSON should use longitude/latitude coordinates;
 other declared coordinate reference systems are converted to EPSG:4326.
 
 If an administrative-boundary file is unavailable, the following command
-creates an approximate Hong Kong bounding-box GeoJSON:
+creates an approximate circular Hong Kong refinement region. The circle is
+constructed in UTM zone 50N so that its 42 km radius is defined in metres:
 
 ```bash
 python - <<'PY'
 import geopandas as gpd
-from shapely.geometry import box
+from shapely.geometry import Point
 
-geometry = box(113.82, 22.15, 114.45, 22.57)
+center = gpd.GeoSeries(
+    [Point(114.15, 22.35)],
+    crs="EPSG:4326",
+).to_crs("EPSG:32650")
+geometry = center.buffer(42_000).to_crs("EPSG:4326").iloc[0]
 data = gpd.GeoDataFrame(
-    {"name": ["Hong Kong approximate bounding box"]},
+    {
+        "name": ["Hong Kong approximate circular region"],
+        "radius_km": [42],
+    },
     geometry=[geometry],
     crs="EPSG:4326",
 )
@@ -118,7 +142,7 @@ data.to_file("mesh/hongkong.geojson", driver="GeoJSON")
 PY
 ```
 
-This bounding box is only a functional fallback. It changes the shape of the
+This circle is only a functional fallback. It changes the shape of the
 high-resolution region and will not reproduce the archived mesh or its METIS
 partition exactly.
 

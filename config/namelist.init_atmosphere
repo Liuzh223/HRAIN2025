@@ -4,7 +4,7 @@
 ! Runtime paths follow the tutorial directory layout and are resolved from the
 ! directory where init_atmosphere_model is launched:
 !   <tutorial-root>/mpas_static/
-!   <tutorial-root>/run/urban_ZR_75.txt
+!   <tutorial-root>/run/vertical_levels/urban_ZR_75.txt
 
 &nhyd_model
     config_init_case = 7
@@ -50,8 +50,8 @@
     config_tc_vertical_grid = true
     config_blend_bdy_terrain = false
 
-    ! The tutorial places the custom zeta-level file in the run directory.
-    config_specified_zeta_levels = './urban_ZR_75.txt'
+    ! Follow the MPAS-Urban-HKUST layout for the custom vertical grid.
+    config_specified_zeta_levels = 'vertical_levels/urban_ZR_75.txt'
 /
 
 &interpolation_control
