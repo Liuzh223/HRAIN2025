@@ -6,3 +6,7 @@ __pycache__/
 *.vtk
 *_graph.info
 *_triangles.nc
+
+# Large meteorological initial-condition files are distributed separately.
+GFS:*
+GFS%3A*
